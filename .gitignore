@@ -1,0 +1,5 @@
+# CMake
+build/
+
+# QtCreator CMake
+CMakeLists.txt.user*
