@@ -13,7 +13,7 @@ protected:
     explicit Component();
 
 private:
-    virtual void Do(GameObject*) = 0;
+    virtual void Do(GameObject *) = 0;
 
     friend class GameObject;
 };

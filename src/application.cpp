@@ -14,7 +14,7 @@ using glm::perspective;
 using std::runtime_error;
 using std::unordered_map;
 
-Application* Application::instance;
+Application *Application::instance;
 static GLFWwindow *window;
 
 // Camera-specific variables
@@ -24,7 +24,7 @@ static unordered_map<int, bool> buttons;
 static unordered_map<int, bool> keys;
 static mat4 projection;
 
-void cursor_position_callback(GLFWwindow*, double xpos, double ypos)
+void cursor_position_callback(GLFWwindow *, double xpos, double ypos)
 {
     auto xoffset = xpos - lastX;
     auto yoffset = lastY - ypos;
@@ -33,37 +33,41 @@ void cursor_position_callback(GLFWwindow*, double xpos, double ypos)
     lastY = ypos;
 
     if (!buttons[GLFW_MOUSE_BUTTON_RIGHT])
+    {
         return;
+    }
 
     camera->ProcessMouse(xoffset, yoffset);
 }
 
-void framebuffer_size_callback(GLFWwindow*, int width, int height)
+void framebuffer_size_callback(GLFWwindow *, int width, int height)
 {
     projection = perspective(45.f, (GLfloat)width / (GLfloat)height, .1f, 1000.f);
     glViewport(0, 0, width, height);
 }
 
-void key_callback(GLFWwindow*, int key, int, int action, int)
+void key_callback(GLFWwindow *, int key, int, int action, int)
 {
     switch (action)
     {
     case GLFW_PRESS:
         keys[key] = true;
         break;
+
     case GLFW_RELEASE:
         keys[key] = false;
         break;
     }
 }
 
-void mouse_button_callback(GLFWwindow*, int button, int action, int)
+void mouse_button_callback(GLFWwindow *, int button, int action, int)
 {
     switch (action)
     {
     case GLFW_PRESS:
         buttons[button] = true;
         break;
+
     case GLFW_RELEASE:
         buttons[button] = false;
         break;
@@ -77,6 +81,7 @@ Application::Application(const char *name, int width, int height, float rotateSp
     {
         throw runtime_error("You cannot create more than one instance of an application class");
     }
+
     instance = this;
 
     if (!glfwInit())
@@ -85,10 +90,12 @@ Application::Application(const char *name, int width, int height, float rotateSp
     }
 
     window = glfwCreateWindow(width, height, name, nullptr, nullptr);
+
     if (!window)
     {
         throw runtime_error("Failed to create GLFW window");
     }
+
     glfwMakeContextCurrent(window);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -117,6 +124,7 @@ Application::~Application()
     {
         delete Disposable::allocated[i];
     }
+
     delete camera;
 
     buttons.clear();
@@ -126,7 +134,7 @@ Application::~Application()
     glfwTerminate();
 }
 
-const Camera* Application::GetCamera()
+const Camera *Application::GetCamera()
 {
     return camera;
 }
@@ -159,13 +167,24 @@ int Application::exec()
         glfwPollEvents();
 
         if (keys[GLFW_KEY_W])
+        {
             camera->ProcessKeyboard(Direction::Forward);
+        }
+
         if (keys[GLFW_KEY_S])
+        {
             camera->ProcessKeyboard(Direction::Backward);
+        }
+
         if (keys[GLFW_KEY_A])
+        {
             camera->ProcessKeyboard(Direction::Left);
+        }
+
         if (keys[GLFW_KEY_D])
+        {
             camera->ProcessKeyboard(Direction::Right);
+        }
 
         glClearColor(1.f, 1.f, 1.f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

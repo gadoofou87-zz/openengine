@@ -8,85 +8,85 @@
 #include <vector>
 
 // little-endian "VBSP"
-#define IDBSPHEADER	(('P'<<24)+('S'<<16)+('B'<<8)+'V')
+#define IDBSPHEADER (('P'<<24)+('S'<<16)+('B'<<8)+'V')
 
-#define MAX_MAP_DISP_POWER		4
+#define MAX_MAP_DISP_POWER      4
 
-#define MAX_DISP_CORNER_NEIGHBORS	4
+#define MAX_DISP_CORNER_NEIGHBORS   4
 
-#define NUM_DISP_POWER_VERTS(power)	( ((1 << (power)) + 1) * ((1 << (power)) + 1) )
+#define NUM_DISP_POWER_VERTS(power) ( ((1 << (power)) + 1) * ((1 << (power)) + 1) )
 
-#define MAX_DISPVERTS					NUM_DISP_POWER_VERTS( MAX_MAP_DISP_POWER )
+#define MAX_DISPVERTS                   NUM_DISP_POWER_VERTS( MAX_MAP_DISP_POWER )
 
 #define PAD_NUMBER(number, boundary) \
     ( ((number) + ((boundary)-1)) / (boundary) ) * (boundary)
 
 enum
 {
-    LUMP_ENTITIES					= 0,
-    LUMP_PLANES						= 1,
-    LUMP_TEXDATA					= 2,
-    LUMP_VERTEXES					= 3,
-    LUMP_VISIBILITY					= 4,
-    LUMP_NODES						= 5,
-    LUMP_TEXINFO					= 6,
-    LUMP_FACES						= 7,
-    LUMP_LIGHTING					= 8,
-    LUMP_OCCLUSION					= 9,
-    LUMP_LEAFS						= 10,
-    LUMP_FACEIDS					= 11,
-    LUMP_EDGES						= 12,
-    LUMP_SURFEDGES					= 13,
-    LUMP_MODELS						= 14,
-    LUMP_WORLDLIGHTS				= 15,
-    LUMP_LEAFFACES					= 16,
-    LUMP_LEAFBRUSHES				= 17,
-    LUMP_BRUSHES					= 18,
-    LUMP_BRUSHSIDES					= 19,
-    LUMP_AREAS						= 20,
-    LUMP_AREAPORTALS				= 21,
-    LUMP_UNUSED0					= 22,
-    LUMP_UNUSED1					= 23,
-    LUMP_UNUSED2					= 24,
-    LUMP_UNUSED3					= 25,
-    LUMP_DISPINFO					= 26,
-    LUMP_ORIGINALFACES				= 27,
-    LUMP_PHYSDISP					= 28,
-    LUMP_PHYSCOLLIDE				= 29,
-    LUMP_VERTNORMALS				= 30,
-    LUMP_VERTNORMALINDICES			= 31,
-    LUMP_DISP_LIGHTMAP_ALPHAS		= 32,
-    LUMP_DISP_VERTS					= 33,
+    LUMP_ENTITIES                   = 0,
+    LUMP_PLANES                     = 1,
+    LUMP_TEXDATA                    = 2,
+    LUMP_VERTEXES                   = 3,
+    LUMP_VISIBILITY                 = 4,
+    LUMP_NODES                      = 5,
+    LUMP_TEXINFO                    = 6,
+    LUMP_FACES                      = 7,
+    LUMP_LIGHTING                   = 8,
+    LUMP_OCCLUSION                  = 9,
+    LUMP_LEAFS                      = 10,
+    LUMP_FACEIDS                    = 11,
+    LUMP_EDGES                      = 12,
+    LUMP_SURFEDGES                  = 13,
+    LUMP_MODELS                     = 14,
+    LUMP_WORLDLIGHTS                = 15,
+    LUMP_LEAFFACES                  = 16,
+    LUMP_LEAFBRUSHES                = 17,
+    LUMP_BRUSHES                    = 18,
+    LUMP_BRUSHSIDES                 = 19,
+    LUMP_AREAS                      = 20,
+    LUMP_AREAPORTALS                = 21,
+    LUMP_UNUSED0                    = 22,
+    LUMP_UNUSED1                    = 23,
+    LUMP_UNUSED2                    = 24,
+    LUMP_UNUSED3                    = 25,
+    LUMP_DISPINFO                   = 26,
+    LUMP_ORIGINALFACES              = 27,
+    LUMP_PHYSDISP                   = 28,
+    LUMP_PHYSCOLLIDE                = 29,
+    LUMP_VERTNORMALS                = 30,
+    LUMP_VERTNORMALINDICES          = 31,
+    LUMP_DISP_LIGHTMAP_ALPHAS       = 32,
+    LUMP_DISP_VERTS                 = 33,
     LUMP_DISP_LIGHTMAP_SAMPLE_POSITIONS = 34,
-    LUMP_GAME_LUMP					= 35,
-    LUMP_LEAFWATERDATA				= 36,
-    LUMP_PRIMITIVES					= 37,
-    LUMP_PRIMVERTS					= 38,
-    LUMP_PRIMINDICES				= 39,
-    LUMP_PAKFILE					= 40,
-    LUMP_CLIPPORTALVERTS			= 41,
-    LUMP_CUBEMAPS					= 42,
-    LUMP_TEXDATA_STRING_DATA		= 43,
-    LUMP_TEXDATA_STRING_TABLE		= 44,
-    LUMP_OVERLAYS					= 45,
-    LUMP_LEAFMINDISTTOWATER			= 46,
-    LUMP_FACE_MACRO_TEXTURE_INFO	= 47,
-    LUMP_DISP_TRIS					= 48,
-    LUMP_PHYSCOLLIDESURFACE			= 49,
+    LUMP_GAME_LUMP                  = 35,
+    LUMP_LEAFWATERDATA              = 36,
+    LUMP_PRIMITIVES                 = 37,
+    LUMP_PRIMVERTS                  = 38,
+    LUMP_PRIMINDICES                = 39,
+    LUMP_PAKFILE                    = 40,
+    LUMP_CLIPPORTALVERTS            = 41,
+    LUMP_CUBEMAPS                   = 42,
+    LUMP_TEXDATA_STRING_DATA        = 43,
+    LUMP_TEXDATA_STRING_TABLE       = 44,
+    LUMP_OVERLAYS                   = 45,
+    LUMP_LEAFMINDISTTOWATER         = 46,
+    LUMP_FACE_MACRO_TEXTURE_INFO    = 47,
+    LUMP_DISP_TRIS                  = 48,
+    LUMP_PHYSCOLLIDESURFACE         = 49,
     LUMP_WATEROVERLAYS              = 50,
-    LUMP_LEAF_AMBIENT_INDEX_HDR		= 51,
+    LUMP_LEAF_AMBIENT_INDEX_HDR     = 51,
     LUMP_LEAF_AMBIENT_INDEX         = 52,
-    LUMP_LIGHTING_HDR				= 53,
-    LUMP_WORLDLIGHTS_HDR			= 54,
-    LUMP_LEAF_AMBIENT_LIGHTING_HDR	= 55,
-    LUMP_LEAF_AMBIENT_LIGHTING		= 56,
-    LUMP_XZIPPAKFILE				= 57,
-    LUMP_FACES_HDR					= 58,
+    LUMP_LIGHTING_HDR               = 53,
+    LUMP_WORLDLIGHTS_HDR            = 54,
+    LUMP_LEAF_AMBIENT_LIGHTING_HDR  = 55,
+    LUMP_LEAF_AMBIENT_LIGHTING      = 56,
+    LUMP_XZIPPAKFILE                = 57,
+    LUMP_FACES_HDR                  = 58,
     LUMP_MAP_FLAGS                  = 59,
-    LUMP_OVERLAY_FADES				= 60,
+    LUMP_OVERLAY_FADES              = 60,
 };
 
-#define	HEADER_LUMPS		64
+#define HEADER_LUMPS        64
 
 struct lump_t
 {
@@ -111,24 +111,24 @@ struct dmodel_t
     int32_t firstface, numfaces;
 };
 
-#define	SURF_LIGHT		0x0001
-#define	SURF_SKY2D		0x0002
-#define	SURF_SKY		0x0004
-#define	SURF_WARP		0x0008
-#define	SURF_TRANS		0x0010
-#define SURF_NOPORTAL	0x0020
-#define	SURF_TRIGGER	0x0040
-#define	SURF_NODRAW		0x0080
+#define SURF_LIGHT      0x0001
+#define SURF_SKY2D      0x0002
+#define SURF_SKY        0x0004
+#define SURF_WARP       0x0008
+#define SURF_TRANS      0x0010
+#define SURF_NOPORTAL   0x0020
+#define SURF_TRIGGER    0x0040
+#define SURF_NODRAW     0x0080
 
-#define	SURF_HINT		0x0100
+#define SURF_HINT       0x0100
 
-#define	SURF_SKIP		0x0200
-#define SURF_NOLIGHT	0x0400
-#define SURF_BUMPLIGHT	0x0800
-#define SURF_NOSHADOWS	0x1000
-#define SURF_NODECALS	0x2000
-#define SURF_NOCHOP		0x4000
-#define SURF_HITBOX		0x8000
+#define SURF_SKIP       0x0200
+#define SURF_NOLIGHT    0x0400
+#define SURF_BUMPLIGHT  0x0800
+#define SURF_NOSHADOWS  0x1000
+#define SURF_NODECALS   0x2000
+#define SURF_NOCHOP     0x4000
+#define SURF_HITBOX     0x8000
 
 struct texinfo_t
 {
@@ -201,7 +201,7 @@ struct dedge_t
     uint16_t v[2];
 };
 
-#define	MAXLIGHTMAPS	4
+#define MAXLIGHTMAPS    4
 
 struct dface_t
 {
@@ -269,13 +269,13 @@ private:
     void ParseEntities();
     Surface BuildFace(int);
     Surface BuildDisplacement(int);
-    GameObject* BuildModel(int);
-    Texture* PackLightmaps(std::vector<Surface>&);
+    GameObject *BuildModel(int);
+    Texture *PackLightmaps(std::vector<Surface> &);
 
     template<typename T>
-    void CopyLump(int, std::vector<T>&);
+    void CopyLump(int, std::vector<T> &);
 
-    static glm::vec3 FlipVector(const glm::vec3&);
+    static glm::vec3 FlipVector(const glm::vec3 &);
 };
 
 #endif // BSP_H

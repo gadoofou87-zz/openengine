@@ -16,7 +16,7 @@ using glm::vec3;
 using std::logic_error;
 using std::vector;
 
-vector<GameObject*> GameObject::instances;
+vector<GameObject *> GameObject::instances;
 
 GameObject::GameObject()
     : parent(nullptr)
@@ -38,20 +38,22 @@ GameObject::~GameObject()
 
 void GameObject::AddComponent(Component *component)
 {
-    if (dynamic_cast<Material*>(component))
+    if (dynamic_cast<Material *>(component))
     {
         if (materialComponent)
         {
             throw logic_error("Material is already attached to this object");
         }
+
         materialComponent = component;
     }
-    else if (dynamic_cast<Mesh*>(component))
+    else if (dynamic_cast<Mesh *>(component))
     {
         if (meshComponent)
         {
             throw logic_error("Mesh is already attached to the object");
         }
+
         meshComponent = component;
     }
     else
@@ -118,6 +120,7 @@ void GameObject::Update()
         mat_rotation *= parent->mat_rotation;
         mat_scale *= parent->mat_scale;
     }
+
     model = mat_position *
             mat_rotation *
             mat_scale;
@@ -130,6 +133,7 @@ void GameObject::Do()
     {
         Update();
     }
+
     if (materialComponent && meshComponent)
     {
         materialComponent->Do(this);

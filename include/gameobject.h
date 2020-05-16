@@ -11,21 +11,21 @@ class Application;
 class Component;
 class GameObject : Disposable
 {
-    static std::vector<GameObject*> instances;
+    static std::vector<GameObject *> instances;
 
 public:
     explicit GameObject();
     ~GameObject();
 
-    void AddComponent(Component*);
-    void RemoveComponent(Component*);
+    void AddComponent(Component *);
+    void RemoveComponent(Component *);
 
     glm::mat4 GetModelMatrix();
 
-    void SetParent(const GameObject*);
-    void SetPosition(const glm::vec3&);
-    void SetRotation(const glm::vec3&);
-    void SetScale(const glm::vec3&);
+    void SetParent(const GameObject *);
+    void SetPosition(const glm::vec3 &);
+    void SetRotation(const glm::vec3 &);
+    void SetScale(const glm::vec3 &);
 
 private:
     const GameObject *parent;

@@ -40,7 +40,7 @@ Mesh::~Mesh()
     glDeleteBuffers(1, ebo);
 }
 
-void Mesh::Do(GameObject*)
+void Mesh::Do(GameObject *)
 {
     glBindVertexArray(vao[0]);
     glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0);

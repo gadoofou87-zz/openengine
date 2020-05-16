@@ -13,7 +13,7 @@ protected:
     explicit Disposable();
 
 private:
-    static std::vector<Disposable*> allocated;
+    static std::vector<Disposable *> allocated;
 
     friend class Application;
 };

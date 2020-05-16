@@ -173,8 +173,8 @@ struct mstudiovertex_t
 };
 
 // little-endian "IDSV"
-#define MODEL_VERTEX_FILE_ID		(('V'<<24)+('S'<<16)+('D'<<8)+'I')
-#define MODEL_VERTEX_FILE_VERSION	4
+#define MODEL_VERTEX_FILE_ID        (('V'<<24)+('S'<<16)+('D'<<8)+'I')
+#define MODEL_VERTEX_FILE_VERSION   4
 
 struct vertexFileHeader_t
 {

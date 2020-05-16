@@ -7,10 +7,10 @@ class Camera;
 class Application
 {
 public:
-    explicit Application(const char*, int = 800, int = 600, float = .15f, float = 30.f);
+    explicit Application(const char *, int = 800, int = 600, float = .15f, float = 30.f);
     ~Application();
 
-    static const Camera* GetCamera();
+    static const Camera *GetCamera();
     static double GetDeltaTime();
     static glm::mat4 GetProjectionMatrix();
 

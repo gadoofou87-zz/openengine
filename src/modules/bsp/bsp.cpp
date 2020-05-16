@@ -43,7 +43,7 @@ void BSP::LoadBSPFile(string filename, bool bHDR)
         throw runtime_error("Could not open file");
     }
 
-    pFile.read(reinterpret_cast<char*>(&g_pBSPHeader), sizeof(g_pBSPHeader));
+    pFile.read(reinterpret_cast<char *>(&g_pBSPHeader), sizeof(g_pBSPHeader));
 
     if (g_pBSPHeader.ident != IDBSPHEADER)
     {
@@ -52,7 +52,7 @@ void BSP::LoadBSPFile(string filename, bool bHDR)
 
     CopyLump(LUMP_MODELS, dmodels);
     CopyLump(bHDR ? LUMP_LIGHTING_HDR
-                  : LUMP_LIGHTING,
+             : LUMP_LIGHTING,
              dlightdata);
     CopyLump(LUMP_ENTITIES, dentdata);
     CopyLump(LUMP_VERTEXES, dvertexes);
@@ -61,7 +61,7 @@ void BSP::LoadBSPFile(string filename, bool bHDR)
     CopyLump(LUMP_DISPINFO, g_dispinfo);
     CopyLump(LUMP_DISP_VERTS, g_DispVerts);
     CopyLump(bHDR ? LUMP_FACES_HDR
-                  : LUMP_FACES,
+             : LUMP_FACES,
              dfaces);
     CopyLump(LUMP_EDGES, dedges);
     CopyLump(LUMP_SURFEDGES, dsurfedges);
@@ -168,21 +168,21 @@ Surface BSP::BuildFace(int index)
     for (int i = dfaces[index].firstedge; i < dfaces[index].firstedge + dfaces[index].numedges; i++)
     {
         auto vertex = FlipVector(dsurfedges[i] > 0
-                ? dvertexes[dedges[abs(dsurfedges[i])].v[0]]
-                : dvertexes[dedges[abs(dsurfedges[i])].v[1]]);
+                                 ? dvertexes[dedges[abs(dsurfedges[i])].v[0]]
+                                 : dvertexes[dedges[abs(dsurfedges[i])].v[1]]);
 
         auto tc1 = dot(vertex, FlipVector(texinfo[dfaces[index].texinfo].textureU))
-                + texinfo[dfaces[index].texinfo].textureUOffset;
+                   + texinfo[dfaces[index].texinfo].textureUOffset;
         auto tc2 = dot(vertex, FlipVector(texinfo[dfaces[index].texinfo].textureV))
-                + texinfo[dfaces[index].texinfo].textureVOffset;
+                   + texinfo[dfaces[index].texinfo].textureVOffset;
         auto tc3 = dot(vertex, FlipVector(texinfo[dfaces[index].texinfo].lightmapU))
-                + texinfo[dfaces[index].texinfo].lightmapUOffset
-                + .5f
-                - dfaces[index].m_LightmapTextureMinsInLuxels[0];
+                   + texinfo[dfaces[index].texinfo].lightmapUOffset
+                   + .5f
+                   - dfaces[index].m_LightmapTextureMinsInLuxels[0];
         auto tc4 = dot(vertex, FlipVector(texinfo[dfaces[index].texinfo].lightmapV))
-                + texinfo[dfaces[index].texinfo].lightmapVOffset
-                + .5f
-                - dfaces[index].m_LightmapTextureMinsInLuxels[1];
+                   + texinfo[dfaces[index].texinfo].lightmapVOffset
+                   + .5f
+                   - dfaces[index].m_LightmapTextureMinsInLuxels[1];
 
         tc1 /= dtexdata[texinfo[dfaces[index].texinfo].texdata].width;
         tc2 /= dtexdata[texinfo[dfaces[index].texinfo].texdata].height;
@@ -213,6 +213,7 @@ Surface BSP::BuildDisplacement(int index)
 
     auto minDist = numeric_limits<float>::max();
     int minIndex = 0;
+
     for (int i = 0; i < 4; i++)
     {
         auto dist = distance(vertexes[i], g_dispinfo[dfaces[index].dispinfo].startPosition);
@@ -267,13 +268,13 @@ Surface BSP::BuildDisplacement(int index)
             dispVertex += flatVertex;
 
             auto tc1 = dot(flatVertex, texinfo[dfaces[index].texinfo].textureU)
-                    + texinfo[dfaces[index].texinfo].textureUOffset;
+                       + texinfo[dfaces[index].texinfo].textureUOffset;
             auto tc2 = dot(flatVertex, texinfo[dfaces[index].texinfo].textureV)
-                    + texinfo[dfaces[index].texinfo].textureVOffset;
+                       + texinfo[dfaces[index].texinfo].textureVOffset;
             auto tc3 = lightdelta * j * dfaces[index].m_LightmapTextureSizeInLuxels[0]
-                    + .5f;
+                       + .5f;
             auto tc4 = lightdelta * i * dfaces[index].m_LightmapTextureSizeInLuxels[1]
-                    + .5f;
+                       + .5f;
 
             tc1 /= dtexdata[texinfo[dfaces[index].texinfo].texdata].width;
             tc2 /= dtexdata[texinfo[dfaces[index].texinfo].texdata].height;
@@ -316,7 +317,7 @@ Surface BSP::BuildDisplacement(int index)
     return surface;
 }
 
-GameObject* BSP::BuildModel(int index)
+GameObject *BSP::BuildModel(int index)
 {
     auto model = new GameObject;
 
@@ -342,7 +343,7 @@ GameObject* BSP::BuildModel(int index)
 
         for (size_t j = 0; j < dict[i].size(); j++)
         {
-            if (texinfo[dfaces[dict[i][j]].texinfo].flags & (SURF_SKY|SURF_NODRAW|SURF_HINT|SURF_SKIP))
+            if (texinfo[dfaces[dict[i][j]].texinfo].flags & (SURF_SKY | SURF_NODRAW | SURF_HINT | SURF_SKIP))
             {
                 continue;
             }
@@ -363,6 +364,7 @@ GameObject* BSP::BuildModel(int index)
             {
                 indices.push_back(surface.indices[k] + pointOffset);
             }
+
             vertexes.insert(vertexes.end(), surface.vertexes.begin(), surface.vertexes.end());
             uv1.insert(uv1.end(), surface.uv1.begin(), surface.uv1.end());
             uv2.insert(uv2.end(), surface.uv2.begin(), surface.uv2.end());
@@ -380,9 +382,9 @@ GameObject* BSP::BuildModel(int index)
     return model;
 }
 
-Texture* BSP::PackLightmaps(vector<Surface> &surfaces)
+Texture *BSP::PackLightmaps(vector<Surface> &surfaces)
 {
-    vector<Texture*> lightmaps;
+    vector<Texture *> lightmaps;
 
     for (auto surface : surfaces)
     {
@@ -393,7 +395,7 @@ Texture* BSP::PackLightmaps(vector<Surface> &surfaces)
 
         auto lightmap = new Texture(dfaces[surface.index].m_LightmapTextureSizeInLuxels[0] + 1,
                                     dfaces[surface.index].m_LightmapTextureSizeInLuxels[1] + 1);
-        auto color = (ColorRGBExp32*)(dlightdata.data() + dfaces[surface.index].lightofs);
+        auto color = (ColorRGBExp32 *)(dlightdata.data() + dfaces[surface.index].lightofs);
 
         for (uintmax_t i = 0; i < lightmap->GetArea(); i++)
         {
@@ -443,7 +445,7 @@ void BSP::CopyLump(int lump, vector<T> &dest)
 {
     dest.resize(g_pBSPHeader.lumps[lump].filelen / sizeof(T));
     pFile.seekg(g_pBSPHeader.lumps[lump].fileofs, pFile.beg);
-    pFile.read(reinterpret_cast<char*>(dest.data()), g_pBSPHeader.lumps[lump].filelen);
+    pFile.read(reinterpret_cast<char *>(dest.data()), g_pBSPHeader.lumps[lump].filelen);
 }
 
 vec3 BSP::FlipVector(const vec3 &v)

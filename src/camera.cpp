@@ -27,17 +27,21 @@ mat4 Camera::GetViewMatrix() const
 void Camera::ProcessKeyboard(Direction direction)
 {
     float velocity = Application::GetDeltaTime() * moveSpeed;
+
     switch (direction)
     {
     case Direction::Forward:
         position += velocity * front;
         break;
+
     case Direction::Backward:
         position -= velocity * front;
         break;
+
     case Direction::Left:
         position -= velocity * right;
         break;
+
     case Direction::Right:
         position += velocity * right;
         break;
@@ -53,9 +57,14 @@ void Camera::ProcessMouse(float xoffset, float yoffset)
     rotation.y += yoffset;
 
     if (rotation.y > 89.f)
+    {
         rotation.y = 89.f;
+    }
+
     if (rotation.y < -89.f)
+    {
         rotation.y = -89.f;
+    }
 
     Update();
 }

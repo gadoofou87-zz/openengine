@@ -33,8 +33,8 @@ public:
     ~Texture();
 
     void Apply(bool);
-    void LoadRawTextureData(const uintptr_t*);
-    std::vector<Rect> PackTextures(const std::vector<Texture*>&);
+    void LoadRawTextureData(const uintptr_t *);
+    std::vector<Rect> PackTextures(const std::vector<Texture *> &);
 
     uintmax_t GetArea() const;
     uint32_t GetWidth() const;
@@ -43,13 +43,14 @@ public:
     Color GetPixel(uint32_t) const;
     Color GetPixel(uint32_t, uint32_t) const;
 
-    void SetPixel(uint32_t, const Color&);
-    void SetPixel(uint32_t, uint32_t, const Color&);
+    void SetPixel(uint32_t, const Color &);
+    void SetPixel(uint32_t, uint32_t, const Color &);
 
 private:
     struct Node
     {
-        Node *child[2] = {
+        Node *child[2] =
+        {
             nullptr,
             nullptr
         };
@@ -57,7 +58,7 @@ private:
         bool used = false;
 
         ~Node();
-        Node* Insert(const Texture*);
+        Node *Insert(const Texture *);
     };
     uint32_t name;
     int32_t internalformat;
@@ -68,7 +69,7 @@ private:
     std::vector<uint8_t> buffer;
 
     void Allocate(uint32_t, uint32_t);
-    std::vector<Rect> PackTextures(const std::vector<Texture*>&, uint32_t, uint32_t);
+    std::vector<Rect> PackTextures(const std::vector<Texture *> &, uint32_t, uint32_t);
 
     friend class Material;
 };

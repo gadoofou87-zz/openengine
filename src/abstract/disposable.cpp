@@ -3,7 +3,7 @@
 #include <algorithm>
 using std::vector;
 
-vector<Disposable*> Disposable::allocated;
+vector<Disposable *> Disposable::allocated;
 
 Disposable::Disposable()
 {

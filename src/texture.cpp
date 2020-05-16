@@ -13,6 +13,7 @@ Texture::Texture(uint32_t width, uint32_t height, TextureFormat textureFormat)
     {
         throw logic_error("Width and/or height values cannot be negative");
     }
+
     switch (textureFormat)
     {
     case TextureFormat::DXT1:
@@ -21,28 +22,32 @@ Texture::Texture(uint32_t width, uint32_t height, TextureFormat textureFormat)
         bitsPerPixel = 4;
         compressed = true;
     }
-        break;
+    break;
+
     case TextureFormat::DXT1_ONEBITALPHA:
     {
         internalformat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
         bitsPerPixel = 4;
         compressed = true;
     }
-        break;
+    break;
+
     case TextureFormat::DXT3:
     {
         internalformat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
         bitsPerPixel = 8;
         compressed = true;
     }
-        break;
+    break;
+
     case TextureFormat::DXT5:
     {
         internalformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
         bitsPerPixel = 8;
         compressed = true;
     }
-        break;
+    break;
+
     case TextureFormat::RGB24:
     {
         internalformat = GL_RGB8;
@@ -50,7 +55,8 @@ Texture::Texture(uint32_t width, uint32_t height, TextureFormat textureFormat)
         bitsPerPixel = 24;
         compressed = false;
     }
-        break;
+    break;
+
     case TextureFormat::RGBA32:
     {
         internalformat = GL_RGBA8;
@@ -58,8 +64,9 @@ Texture::Texture(uint32_t width, uint32_t height, TextureFormat textureFormat)
         bitsPerPixel = 32;
         compressed = false;
     }
-        break;
+    break;
     }
+
     Allocate(width, height);
     glGenTextures(1, &name);
 }
@@ -72,6 +79,7 @@ Texture::~Texture()
 void Texture::Apply(bool updateMipmaps)
 {
     glBindTexture(GL_TEXTURE_2D, name);
+
     if (compressed)
     {
         glCompressedTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, buffer.size(), buffer.data());
@@ -80,6 +88,7 @@ void Texture::Apply(bool updateMipmaps)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, internalformat, width, height, 0, format, GL_UNSIGNED_BYTE, buffer.data());
     }
+
     if (updateMipmaps)
     {
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -88,6 +97,7 @@ void Texture::Apply(bool updateMipmaps)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
+
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -96,7 +106,7 @@ void Texture::LoadRawTextureData(const uintptr_t *data)
     memcpy(buffer.data(), data, buffer.size());
 }
 
-vector<Rect> Texture::PackTextures(const vector<Texture*> &textures)
+vector<Rect> Texture::PackTextures(const vector<Texture *> &textures)
 {
     return PackTextures(textures, width, height);
 }
@@ -122,28 +132,35 @@ Color Texture::GetPixel(uint32_t pixel) const
     {
         throw logic_error("Not supported for compressed textures");
     }
+
     if (pixel >= GetArea())
     {
         throw logic_error("Out of the image");
     }
+
     Color color(255);
     auto offset = pixel * bitsPerPixel / 8;
+
     if (bitsPerPixel >= 8)
     {
         color.r = buffer[offset];
     }
+
     if (bitsPerPixel >= 16)
     {
         color.g = buffer[offset + 1];
     }
+
     if (bitsPerPixel >= 24)
     {
         color.b = buffer[offset + 2];
     }
+
     if (bitsPerPixel >= 32)
     {
         color.a = buffer[offset + 3];
     }
+
     return color;
 }
 
@@ -158,23 +175,29 @@ void Texture::SetPixel(uint32_t pixel, const Color &color)
     {
         throw logic_error("Not supported for compressed textures");
     }
+
     if (pixel >= GetArea())
     {
         throw logic_error("Out of the image");
     }
+
     auto offset = pixel * bitsPerPixel / 8;
+
     if (bitsPerPixel >= 8)
     {
         buffer[offset] = color.r;
     }
+
     if (bitsPerPixel >= 16)
     {
         buffer[offset + 1] = color.g;
     }
+
     if (bitsPerPixel >= 24)
     {
         buffer[offset + 2] = color.b;
     }
+
     if (bitsPerPixel >= 32)
     {
         buffer[offset + 3] = color.a;
@@ -193,7 +216,7 @@ void Texture::Allocate(uint32_t newWidth, uint32_t newHeight)
     buffer.resize(width * height * bitsPerPixel / 8);
 }
 
-vector<Rect> Texture::PackTextures(const vector<Texture*> &textures, uint32_t startW, uint32_t startH)
+vector<Rect> Texture::PackTextures(const vector<Texture *> &textures, uint32_t startW, uint32_t startH)
 {
     auto root = new Node;
     root->rc.position.x = 0;
@@ -206,6 +229,7 @@ vector<Rect> Texture::PackTextures(const vector<Texture*> &textures, uint32_t st
     for (const auto texture : textures)
     {
         auto pnode = root->Insert(texture);
+
         if (!pnode)
         {
             delete root;
@@ -214,6 +238,7 @@ vector<Rect> Texture::PackTextures(const vector<Texture*> &textures, uint32_t st
                                 startH * 2);
 
         }
+
         pnode->used = true;
         rc.push_back(pnode->rc);
     }
@@ -243,18 +268,19 @@ Texture::Node::~Node()
     {
         return;
     }
+
     delete child[0];
     delete child[1];
 }
 
-Texture::Node* Texture::Node::Insert(const Texture *texture)
+Texture::Node *Texture::Node::Insert(const Texture *texture)
 {
     if (child[0])
     {
         auto newNode = child[0]->Insert(texture);
         return newNode
-                ? newNode
-                : child[1]->Insert(texture);
+               ? newNode
+               : child[1]->Insert(texture);
     }
 
     if (used)
@@ -269,6 +295,7 @@ Texture::Node* Texture::Node::Insert(const Texture *texture)
     {
         return nullptr;
     }
+
     if (dw == 0 && dh == 0)
     {
         return this;

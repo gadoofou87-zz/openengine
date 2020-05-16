@@ -15,13 +15,13 @@ class Material : public Component
 public:
     explicit Material();
 
-    Texture* GetTexture(std::string);
-    void SetTexture(std::string, Texture*);
+    Texture *GetTexture(std::string);
+    void SetTexture(std::string, Texture *);
 
 private:
-    std::unordered_map<int32_t, Texture*> textures;
+    std::unordered_map<int32_t, Texture *> textures;
 
-    void Do(GameObject*);
+    void Do(GameObject *);
 };
 
 #endif // MATERIAL_H
