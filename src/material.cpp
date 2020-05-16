@@ -25,58 +25,63 @@ int32_t Material::mvpLocation[3];
 
 Material::Material()
 {
-    if (glIsProgram(shaderProgram))
+    if (!glIsProgram(shaderProgram))
     {
-        return;
+        int32_t success, logLength;
+        vector<char> log;
+        auto vShader = glCreateShader(GL_VERTEX_SHADER);
+        auto fShader = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(vShader, 1, &vShaderCode, nullptr);
+        glShaderSource(fShader, 1, &fShaderCode, nullptr);
+        glCompileShader(vShader);
+        glGetShaderiv(vShader, GL_COMPILE_STATUS, &success);
+
+        if (!success)
+        {
+            glGetShaderiv(vShader, GL_INFO_LOG_LENGTH, &logLength);
+            log.resize(logLength);
+            glGetShaderInfoLog(vShader, logLength, nullptr, log.data());
+            throw runtime_error(string("Failed to compile vertex shader:\n") + log.data());
+        }
+
+        glCompileShader(fShader);
+        glGetShaderiv(fShader, GL_COMPILE_STATUS, &success);
+
+        if (!success)
+        {
+            glGetShaderiv(fShader, GL_INFO_LOG_LENGTH, &logLength);
+            log.resize(logLength);
+            glGetShaderInfoLog(fShader, logLength, nullptr, log.data());
+            throw runtime_error(string("Failed to compile fragment shader:\n") + log.data());
+        }
+
+        shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vShader);
+        glAttachShader(shaderProgram, fShader);
+        glLinkProgram(shaderProgram);
+        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+
+        if (!success)
+        {
+            glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logLength);
+            log.resize(logLength);
+            glGetProgramInfoLog(shaderProgram, logLength, nullptr, log.data());
+            throw runtime_error(string("Failed to link shader program:\n") + log.data());
+        }
+
+        glDeleteShader(vShader);
+        glDeleteShader(fShader);
+        mvpLocation[0] = glGetUniformLocation(shaderProgram, "model");
+        mvpLocation[1] = glGetUniformLocation(shaderProgram, "view");
+        mvpLocation[2] = glGetUniformLocation(shaderProgram, "projection");
     }
 
-    int32_t success, logLength;
-    vector<char> log;
-    auto vShader = glCreateShader(GL_VERTEX_SHADER);
-    auto fShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(vShader, 1, &vShaderCode, nullptr);
-    glShaderSource(fShader, 1, &fShaderCode, nullptr);
-    glCompileShader(vShader);
-    glGetShaderiv(vShader, GL_COMPILE_STATUS, &success);
-
-    if (!success)
+    for (const auto &name :
+            { "_MainTex", "_LightmapTex"
+            })
     {
-        glGetShaderiv(vShader, GL_INFO_LOG_LENGTH, &logLength);
-        log.resize(logLength);
-        glGetShaderInfoLog(vShader, logLength, nullptr, log.data());
-        throw runtime_error(string("Failed to compile vertex shader:\n") + log.data());
+        SetTexture(name, new Texture(1, 1));
     }
-
-    glCompileShader(fShader);
-    glGetShaderiv(fShader, GL_COMPILE_STATUS, &success);
-
-    if (!success)
-    {
-        glGetShaderiv(fShader, GL_INFO_LOG_LENGTH, &logLength);
-        log.resize(logLength);
-        glGetShaderInfoLog(fShader, logLength, nullptr, log.data());
-        throw runtime_error(string("Failed to compile fragment shader:\n") + log.data());
-    }
-
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vShader);
-    glAttachShader(shaderProgram, fShader);
-    glLinkProgram(shaderProgram);
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-
-    if (!success)
-    {
-        glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logLength);
-        log.resize(logLength);
-        glGetProgramInfoLog(shaderProgram, logLength, nullptr, log.data());
-        throw runtime_error(string("Failed to link shader program:\n") + log.data());
-    }
-
-    glDeleteShader(vShader);
-    glDeleteShader(fShader);
-    mvpLocation[0] = glGetUniformLocation(shaderProgram, "model");
-    mvpLocation[1] = glGetUniformLocation(shaderProgram, "view");
-    mvpLocation[2] = glGetUniformLocation(shaderProgram, "projection");
 }
 
 Texture *Material::GetTexture(string name)

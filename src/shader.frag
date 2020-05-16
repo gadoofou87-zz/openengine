@@ -7,6 +7,6 @@ uniform sampler2D _MainTex;
 uniform sampler2D _LightmapTex;
 void main()
 {
-    color = texture(_LightmapTex, frag_uv2);
+    color = texture(_MainTex, frag_uv1) + texture(_LightmapTex, frag_uv2);
 }
 )""

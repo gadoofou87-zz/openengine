@@ -21,6 +21,7 @@ public:
 private:
     std::unordered_map<int32_t, Texture *> textures;
 
+    void Initialize();
     void Do(GameObject *);
 };
 
