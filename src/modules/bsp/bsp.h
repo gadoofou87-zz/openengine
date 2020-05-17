@@ -230,13 +230,12 @@ struct ColorRGBExp32
     int8_t exponent;
 };
 
+struct Vertex;
 struct Surface
 {
     int index;
     std::vector<uint32_t> indices;
-    std::vector<glm::vec3> vertexes;
-    std::vector<glm::vec2> uv1;
-    std::vector<glm::vec2> uv2;
+    std::vector<Vertex> vertexes;
 };
 
 class GameObject;

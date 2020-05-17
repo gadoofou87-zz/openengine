@@ -189,9 +189,12 @@ Surface BSP::BuildFace(int index)
         tc3 /= dfaces[index].m_LightmapTextureSizeInLuxels[0] + 1;
         tc4 /= dfaces[index].m_LightmapTextureSizeInLuxels[1] + 1;
 
-        surface.vertexes.push_back(vertex);
-        surface.uv1.push_back(vec2(tc1, tc2));
-        surface.uv2.push_back(vec2(tc3, tc4));
+        surface.vertexes.push_back(
+        {
+            vertex,
+            vec2(tc1, tc2),
+            vec2(tc3, tc4)
+        });
     }
 
     return surface;
@@ -281,9 +284,12 @@ Surface BSP::BuildDisplacement(int index)
             tc3 /= dfaces[index].m_LightmapTextureSizeInLuxels[0] + 1;
             tc4 /= dfaces[index].m_LightmapTextureSizeInLuxels[1] + 1;
 
-            surface.vertexes.push_back(FlipVector(dispVertex));
-            surface.uv1.push_back(vec2(tc1, tc2));
-            surface.uv2.push_back(vec2(tc3, tc4));
+            surface.vertexes.push_back(
+            {
+                FlipVector(dispVertex),
+                vec2(tc1, tc2),
+                vec2(tc3, tc4)
+            });
         }
     }
 
@@ -336,9 +342,7 @@ GameObject *BSP::BuildModel(int index)
         }
 
         vector<uint32_t> indices;
-        vector<vec3> vertexes;
-        vector<vec2> uv1;
-        vector<vec2> uv2;
+        vector<Vertex> vertexes;
         vector<Surface> surfaces;
 
         for (size_t j = 0; j < dict[i].size(); j++)
@@ -356,7 +360,7 @@ GameObject *BSP::BuildModel(int index)
 
         auto lightmap = PackLightmaps(surfaces);
 
-        for (auto surface : surfaces)
+        for (const auto &surface : surfaces)
         {
             auto pointOffset = vertexes.size();
 
@@ -366,12 +370,10 @@ GameObject *BSP::BuildModel(int index)
             }
 
             vertexes.insert(vertexes.end(), surface.vertexes.begin(), surface.vertexes.end());
-            uv1.insert(uv1.end(), surface.uv1.begin(), surface.uv1.end());
-            uv2.insert(uv2.end(), surface.uv2.begin(), surface.uv2.end());
         }
 
         auto material = new Material;
-        auto mesh = new Mesh(indices, vertexes, uv1, uv2);
+        auto mesh = new Mesh(indices, vertexes);
 
         material->SetTexture("_LightmapTex", lightmap);
 
@@ -386,7 +388,7 @@ Texture *BSP::PackLightmaps(vector<Surface> &surfaces)
 {
     vector<Texture *> lightmaps;
 
-    for (auto surface : surfaces)
+    for (const auto &surface : surfaces)
     {
         if (dfaces[surface.index].lightofs == -1)
         {
@@ -411,9 +413,9 @@ Texture *BSP::PackLightmaps(vector<Surface> &surfaces)
     auto atlas = new Texture(1, 1);
     auto rc = atlas->PackTextures(lightmaps);
 
-    for (auto lightmap : lightmaps)
+    for (size_t i = 0; i < lightmaps.size(); i++)
     {
-        delete lightmap;
+        delete lightmaps[i];
     }
 
     for (size_t i = 0; i < surfaces.size(); i++)
@@ -423,15 +425,15 @@ Texture *BSP::PackLightmaps(vector<Surface> &surfaces)
             continue;
         }
 
-        for (size_t j = 0; j < surfaces[i].uv2.size(); j++)
+        for (size_t j = 0; j < surfaces[i].vertexes.size(); j++)
         {
-            auto x = surfaces[i].uv2[j].x * rc[i].size.x + rc[i].position.x;
-            auto y = surfaces[i].uv2[j].y * rc[i].size.y + rc[i].position.y;
+            auto x = surfaces[i].vertexes[j].uv2.x * rc[i].size.x + rc[i].position.x;
+            auto y = surfaces[i].vertexes[j].uv2.y * rc[i].size.y + rc[i].position.y;
 
             x /= atlas->GetWidth();
             y /= atlas->GetHeight();
 
-            surfaces[i].uv2[j] = vec2(x, y);
+            surfaces[i].vertexes[j].uv2 = vec2(x, y);
         }
     }
 
